@@ -1,26 +1,30 @@
 <div class='options'>
-  <label>
-    <input type='checkbox' checked={{showSortIndicator}} {{on "click" this.changeSortIndicator}}>
-    Show Sort Indicator
-  </label>
-  <label>
-    <input type='checkbox' checked={{showResizeHandle}} {{on "click" this.changeResizeHandler}}>
-    Show Resize Handle
-  </label>
+  <button type="button"  {{on "click" this.changeTransferIndicator}}>
+    Transfered
+  </button> 
+  <button type="button"  {{on "click" this.changeNotTransferIndicator}}>
+    Not Transfered
+  </button> 
+  <button type="button" {{on "click" this.changeNotReconcileIndicator}}>
+    Not Reconciled
+  </button> 
+  <button type="button" {{on "click" this.changeAllIndicator}}>
+    All
+  </button> 
 </div>
 
 <div class="container">
-  <EmberTable style="height: 600px; width: 850px; background-color: lightgrey" as |t|>
+  <EmberTable style="height: 600px; width: 1000px; background-color: lightgrey" as |t|>
     <t.head 
     @columns={{this.columns}} 
     @sorts={{this.sorts}}
-    @onUpdateSort={{action (mut this.sorts)}}
+    @onUpdateSorts={{action (mut this.sorts)}}
     as |h| >
-      <h.row  as |r|>
-        <r.cell as |column|>
-         {{column.name}}
-        </r.cell>
-      </h.row>
+        <h.row  as |r|>
+          <r.cell as |column|>
+                {{column.name}}
+          </r.cell>
+        </h.row>
     </t.head>
 
     <t.body 
@@ -29,12 +33,12 @@
     @selection={{this.selection}}
     style="text-align: center"
     as |b|>
-      <b.row 
-      as |r|>
-        <r.cell as |value|>
-        {{value}}
-        </r.cell>
-      </b.row>
+        <b.row 
+        as |r|>
+          <r.cell as |value|>
+          {{value}}
+          </r.cell>
+        </b.row>
     </t.body>
   </EmberTable>
 </div>
