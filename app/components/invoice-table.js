@@ -3,6 +3,7 @@ import { action, computed } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { mockData } from '../components/data';
 
+
 export default class InvoiceTableComponent extends Component {
     // triggers for displaying selected items
     @tracked showTransferIndicator = false;
@@ -10,6 +11,37 @@ export default class InvoiceTableComponent extends Component {
     @tracked showNotReconcileIndicator = false;
     sorts = [];
     selection = [];
+
+    @action
+    transferHandler () {
+    	var data = 
+    		"[ {\"id\": null, \"invoiceNumber\": \"66666\", \"invoiceDate\": \"2020-03-12\", \"customerName\" : \"Benjamin Yeung\", \"invoiceAmount\": 1200.00,	 \"lines\": [	   { \"id\": null,	   \"itemDescription\": \"Water bottles\",	    \"taxCode\": null,	    \"qty\": 100.00,	    \"unitPrice\" : 12.00,	    \"amount\" : 1200.00	    }	  ]  } ]";
+
+    	var xhr = new XMLHttpRequest();
+    	// xhr.withCredentials = true;
+
+    	// xhr.addEventListener("readystatechange", function() {
+    	//   if(this.readyState === 4) {
+    	//     console.log(this.responseText);
+    	//   }
+    	// });
+
+    	xhr.open("POST", "http://localhost:5001/invoicesCreate");
+        xhr.setRequestHeader("Content-Type", "application/json");
+    	//xhr.setRequestHeader("Content-Type", "text/plain");
+
+    	xhr.send(data);
+    }
+
+    @action
+    reconcileHandler () {
+
+    }
+
+    @action
+    searchHandler () {
+
+    }
 
     @action
     changeTransferIndicator () {
@@ -39,6 +71,10 @@ export default class InvoiceTableComponent extends Component {
         this.showNotReconcileIndicator = false;
     };
 
+    @action
+    connectQB () {
+        window.open("http://localhost:5001/quickbooks/connect");
+    }
 
     @computed
     get columns() {
@@ -70,7 +106,8 @@ export default class InvoiceTableComponent extends Component {
         } else if (this.showNotReconcileIndicator) {
             data.rows = data.rows.filter( i => f.includes( i.reconciled ))
             return data.rows
-        }
+        } else {
             return mockData.rows
         }
+    }
 }

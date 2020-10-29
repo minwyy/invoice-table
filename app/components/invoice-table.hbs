@@ -1,4 +1,14 @@
 <div class='options'>
+  <button type="button"  {{on "click" this.transferHandler}}>
+    Transfer
+  </button> 
+  <button type="button"  {{on "click" this.reconcileHandler}}>
+    Reconcile
+  </button> 
+  <button type="button"  {{on "click" this.searchHandler}}>
+    Find
+  </button> 
+  <label>Show: </label>
   <button type="button"  {{on "click" this.changeTransferIndicator}}>
     Transfered
   </button> 
@@ -41,4 +51,10 @@
         </b.row>
     </t.body>
   </EmberTable>
+</div>
+
+<div class="connection">
+  <button type="button"  {{on "click" this.connectQB}}>
+    Connect to Quickbooks
+  </button> 
 </div>
