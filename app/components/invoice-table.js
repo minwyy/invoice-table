@@ -74,7 +74,12 @@ export default class InvoiceTableComponent extends Component {
     @action
     connectQB () {
         window.open("http://localhost:5001/quickbooks/connect");
-    }
+    };
+
+    @action
+    connectXero () {
+        window.open("http://localhost:5001/xero/connect");
+    };
 
     @computed
     get columns() {
