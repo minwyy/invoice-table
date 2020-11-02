@@ -14,27 +14,26 @@ export default class InvoiceTableComponent extends Component {
 
     @action
     transferHandler () {
-    	var data = 
-    		"[ {\"id\": null, \"invoiceNumber\": \"66666\", \"invoiceDate\": \"2020-03-12\", \"customerName\" : \"Benjamin Yeung\", \"invoiceAmount\": 1200.00,	 \"lines\": [	   { \"id\": null,	   \"itemDescription\": \"Water bottles\",	    \"taxCode\": null,	    \"qty\": 100.00,	    \"unitPrice\" : 12.00,	    \"amount\" : 1200.00	    }	  ]  } ]";
+    	let data = selection;
+    		// "[ {\"id\": null, \"invoiceNumber\": \"66666\", \"invoiceDate\": \"2020-03-12\", \"customerName\" : \"Benjamin Yeung\", \"invoiceAmount\": 1200.00,	 \"lines\": [	   { \"id\": null,	   \"itemDescription\": \"Water bottles\",	    \"taxCode\": null,	    \"qty\": 100.00,	    \"unitPrice\" : 12.00,	    \"amount\" : 1200.00	    }	  ]  } ]";
+        // Update status of transferred via REST calls
 
-    	var xhr = new XMLHttpRequest();
-    	// xhr.withCredentials = true;
 
-    	// xhr.addEventListener("readystatechange", function() {
-    	//   if(this.readyState === 4) {
-    	//     console.log(this.responseText);
-    	//   }
-    	// });
 
+        
+        // Post data to backend server
+    	let xhr = new XMLHttpRequest();
     	xhr.open("POST", "http://localhost:5001/invoicesCreate");
         xhr.setRequestHeader("Content-Type", "application/json");
     	//xhr.setRequestHeader("Content-Type", "text/plain");
 
-    	xhr.send(data);
+        xhr.send(data);
+
     }
 
     @action
     reconcileHandler () {
+        
 
     }
 
@@ -84,12 +83,12 @@ export default class InvoiceTableComponent extends Component {
     @computed
     get columns() {
         return [
-            { name: 'Invoice No.', valuePath: 'invoiceNo', isFixed: 'left'},
-            { name: 'Client', valuePath: 'client'},
+            { name: 'Invoice No.', valuePath: 'invoiceNumber', isFixed: 'left'},
+            { name: 'Client', valuePath: 'customerName'},
             { name: 'Invoice Date', valuePath: 'invoiceDate'},
             { name: 'Gross', valuePath: 'gross'},
             { name: 'Tax', valuePath: 'tax'},
-            { name: 'Total Inc. Tax', valuePath: 'totalInclueTax'},
+            { name: 'Total Inc. Tax', valuePath: 'invoiceAmount'},
             { name: 'Transferred', valuePath: 'transferred'},
             { name: 'Reconciled', valuePath: 'reconciled'},
             { name: 'Accounts', valuePath: 'accounts'}
