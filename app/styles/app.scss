@@ -1,0 +1,137 @@
+@import 'ember-uikit';
+
+
+.ember-table {
+    height: 800px;
+}
+
+input[type=checkbox] {
+    /* 1 */
+    box-sizing: border-box;
+    /* 2 */
+    margin: 0;
+    /* 3 */
+    border-radius: 0;
+    /* 4 */
+    font: inherit;
+}
+
+input[type=checkbox] :not(:disabled) {
+    cursor: pointer;
+}
+
+input[type=checkbox] {
+    /* 1 */
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+    /* 2 */
+    overflow: hidden;
+    /* 3 */
+    margin-top: -4px;
+    vertical-align: middle;
+    /* 4 */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    /* 5 */
+    background-color: transparent;
+    /* 6 */
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    border: 1px solid #cccccc;
+    transition: 0.2s ease-in-out;
+    transition-property: background-color, border;
+}
+
+input[type=checkbox]:focus {
+    outline: none;
+    border-color: #1e87f0;
+}
+
+input[type=checkbox]:checked,
+input[type=checkbox]:indeterminate {
+    background-color: #1e87f0;
+    border-color: transparent;
+}
+
+input[type=checkbox]:checked:focus,
+input[type=checkbox]:indeterminate:focus {
+    background-color: #0e6dcd;
+}
+
+input[type=checkbox]:checked {
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2214%22%20height%3D%2211%22%20viewBox%3D%220%200%2014%2011%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Cpolygon%20fill%3D%22%23fff%22%20points%3D%2212%201%205%207.5%202%205%201%205.5%205%2010%2013%201.5%22%20%2F%3E%0A%3C%2Fsvg%3E%0A");
+}
+input[type=checkbox]:indeterminate {
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Crect%20fill%3D%22%23fff%22%20x%3D%223%22%20y%3D%228%22%20width%3D%2210%22%20height%3D%221%22%20%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+input[type=checkbox]:disabled {
+    background-color: #f8f8f8;
+    border-color: #e5e5e5;
+}
+
+input[type=checkbox].disabled:checked {
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2214%22%20height%3D%2211%22%20viewBox%3D%220%200%2014%2011%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Cpolygon%20fill%3D%22%23999%22%20points%3D%2212%201%205%207.5%202%205%201%205.5%205%2010%2013%201.5%22%20%2F%3E%0A%3C%2Fsvg%3E%0A");
+}
+input[type=checkbox]:disabled:indeterminate {
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Crect%20fill%3D%22%23999%22%20x%3D%223%22%20y%3D%228%22%20width%3D%2210%22%20height%3D%221%22%20%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+thead, tbody {
+    text-align: center;
+}
+
+
+
+td.is-first-column {
+    // The first column may contain table controls, such as the selection checkbox
+    // and the collapse toggle. These are wrapped in a container so we can use
+    // flex to display them and have them grow correctly with the cell
+    padding: 0;
+}
+.et-cell-container {
+    display: flex;
+}
+
+.et-toggle-select,
+.et-toggle-collapse {
+    // Use flex to vertically align the checkbox checkmark and toggle elements
+    display: flex;
+    align-items: center;
+}
+.et-toggle-select {
+    padding: 4px;
+  }
+.et-toggle-collapse {
+
+// Padding is applied to the collapse toggle to indent it further, so we
+// don't apply padding on the base styles, and instead set a default width.
+// This prevents us from having to do maths to get the indent padding.
+    box-sizing: content-box;
+    width: 24px;
+    padding: 0;
+}
+
+.et-depth-placeholder:not(.depth-0) {
+// Placeholder element for the last child in a tree, takes the place of
+// the collapse toggle and pushes the items further out.
+    box-sizing: content-box;
+    width: 24px;
+    height: 100%;
+}
+
+.et-depth-indent {
+@for $i from 1 through 10 {
+    &.depth-#{$i} {
+    padding-left: 8px * $i;
+    }
+}
+}
+
+.et-cell-content {
+// Flex the remaining cell content to take up the rest of the cell, and
+// give it the same padding as normal table cells.
+    flex: 1;
+    padding: 4px;
+}

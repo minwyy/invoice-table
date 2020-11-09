@@ -1,63 +1,68 @@
-<div class='options'>
-  <button type="button"  {{on "click" this.transferHandler}}>
-    Transfer
-  </button> 
-  <button type="button"  {{on "click" this.reconcileHandler}}>
-    Reconcile
-  </button> 
-  <button type="button"  {{on "click" this.searchHandler}}>
-    Find
-  </button> 
-  <label>Show: </label>
-  <button type="button"  {{on "click" this.changeTransferIndicator}}>
-    Transfered
-  </button> 
-  <button type="button"  {{on "click" this.changeNotTransferIndicator}}>
-    Not Transfered
-  </button> 
-  <button type="button" {{on "click" this.changeNotReconcileIndicator}}>
-    Not Reconciled
-  </button> 
-  <button type="button" {{on "click" this.changeAllIndicator}}>
-    All
-  </button> 
-</div>
+<UkCard @size="large" as |head|>
+  <head.header>
+    <UkButton type="button" @color="primary" @on-click={{this.transferHandler}}>
+      Transfer
+    </UkButton> 
+    <UkButton type="button"  @color="primary" @on-click={{this.reconcileHandler}}>
+      Reconcile
+    </UkButton> 
+    <UkButton type="button"  @color="primary" @on-click={{this.searchHandler}}>
+      Find
+    </UkButton> 
+    <label>show: </label>
+    <UkButton type="button"  @color="secondary" @on-click={{this.changeTransferIndicator}}>
+      Transfered
+    </UkButton> 
+    <UkButton type="button"  @color="secondary" @on-click={{this.changeNotTransferIndicator}}>
+      Not Transfered
+    </UkButton> 
+    <UkButton type="button" @color="secondary" @on-click={{this.changeNotReconcileIndicator}}>
+      Not Reconciled
+    </UkButton> 
+    <UkButton type="button" @color="secondary" @on-click={{this.changeAllIndicator}}>
+      All
+    </UkButton> 
+  </head.header>
 
-<div class="container">
-  <EmberTable style="height: 600px; width: 1000px; background-color: lightgrey" as |t|>
-    <t.head 
-    @columns={{this.columns}} 
-    @sorts={{this.sorts}}
-    @onUpdateSorts={{action (mut this.sorts)}}
-    as |h| >
-        <h.row  as |r|>
-          <r.cell as |column|>
-                {{column.name}}
-          </r.cell>
-        </h.row>
-    </t.head>
+<card.body>
+  <div>
+    <EmberTable as |t|>
+      <t.head 
+      @columns={{this.columns}} 
+      @sorts={{this.sorts}}
+      @onUpdateSorts={{action (mut this.sorts)}}
+      as |h| >
+          <h.row  as |r|>
+            <r.cell as |column|>
+                  {{column.name}}
+            </r.cell>
+          </h.row>
+      </t.head>
 
-    <t.body 
-    @rows={{this.rows}}
-    @onSelect={{action (mut this.selection)}}
-    @selection={{this.selection}}
-    style="text-align: center"
-    as |b|>
-        <b.row 
-        as |r|>
-          <r.cell as |value|>
-          {{value}}
-          </r.cell>
-        </b.row>
-    </t.body>
-  </EmberTable>
-</div>
+      <t.body 
+      @rows={{this.rows}}
+      @onSelect={{action (mut this.selection)}}
+      @selection={{this.selection}}
+      as |b|>
+          <b.row 
+          as |r|>
+            <r.cell as |value|>
+            {{value}}
+            </r.cell>
+          </b.row>
+      </t.body>
+    </EmberTable>
+  </div>
+</card.body>
 
-<div class="connection">
-  <button type="button"  {{on "click" this.connectQB}}>
-    Connect to Quickbooks
-  </button> 
-  <button type="button"  {{on "click" this.connectXero}}>
-    Connect to Xero
-  </button> 
-</div>
+<card.footer>
+  <div>
+    <UkButton type="button"  @color="primary" @on-click={{this.connectQB}}>
+      Connect to Quickbooks
+    </UkButton> 
+    <UkButton type="button"  @color="primary" @on-click={{this.connectXero}}>
+      Connect to Xero
+    </UkButton> 
+  </div>
+</card.footer>
+</UkCard>
