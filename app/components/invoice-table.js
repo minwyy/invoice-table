@@ -84,22 +84,41 @@ export default class InvoiceTableComponent extends Component {
     get columns() {
         return [
             { name: 'Invoice No.', valuePath: 'invoiceNumber', isFixed: 'left'},
-            { name: 'Client', valuePath: 'customerName'},
-            { name: 'Invoice Date', valuePath: 'invoiceDate'},
-            { name: 'Gross', valuePath: 'gross'},
-            { name: 'Tax', valuePath: 'tax'},
+            { name: 'Client', valuePath: 'customerName', width: 200 },
+            { name: 'Invoice Date', valuePath: 'invoiceDate', width: 150 },
             { name: 'Total Inc. Tax', valuePath: 'invoiceAmount'},
-            { name: 'Transferred', valuePath: 'transferred'},
-            { name: 'Reconciled', valuePath: 'reconciled'},
-            { name: 'Accounts', valuePath: 'accounts'}
+            { name: 'Transferred', valuePath: 'transferred', cellComponent: 'icon'},
+            { name: 'Reconciled', valuePath: 'reconciled', cellComponent: 'icon'},
+            { name: 'Accounts', valuePath: 'accounts', cellComponent: 'account-link'}
         ];
       };
     
-    @computed('showTransferIndicator')
+    @computed('showTransferIndicator', 'showNotTransferIndicator', 'showNotReconcileIndicator')
     get rows() {
-        let data = {...mockData};
-        let t = ["True"];
-        let f = ["False"];
+        let rawData = [...mockData];
+        let rowList = [];
+        rawData.forEach((child) => {
+            if (child.canSendToExternal) {
+                let row = new Object();
+                row.invoiceNumber = child.invoiceNumber;
+                row.customerName = child.customerName;
+                row.invoiceDate = child.invoiceDate.substring(0, 10);
+                row.invoiceAmount = child.amountIncludingTax;
+                if (child.externalStatus == 'RECONCILED') {
+                    row.transferred = true;
+                    row.reconciled = true;
+                } else if (child.externalStatus == 'TRANSFERED') {
+                    row.transferred = true;
+                    row.reconciled = false;
+                } else {
+                    row.transferred = false;
+                    row.reconciled = false;
+                }
+                row.accounts = row.reconciled;
+                rowList.push(row);
+            }
+        }
+        )
         // filter transfered invoice
         if (this.showTransferIndicator) {
             data.rows = data.rows.filter( i => t.includes( i.transferred ))
@@ -111,7 +130,7 @@ export default class InvoiceTableComponent extends Component {
             data.rows = data.rows.filter( i => f.includes( i.reconciled ))
             return data.rows
         } else {
-            return mockData.rows
+            return rowList
         }
     }
 }

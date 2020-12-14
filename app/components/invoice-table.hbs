@@ -42,12 +42,14 @@
       <t.body 
       @rows={{this.rows}}
       @onSelect={{action (mut this.selection)}}
-      @selection={{this.selection}}
-      as |b|>
-          <b.row 
-          as |r|>
-            <r.cell as |value|>
-            {{value}}
+      @selection={{this.selection}} as |b|>
+          <b.row as |r|>
+            <r.cell as |value column|>
+            {{#if column.cellComponent}}
+              <column.cellComponent @trigger={{value}} />
+            {{else}}
+              {{value}}
+            {{/if}}
             </r.cell>
           </b.row>
       </t.body>
