@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { action, computed } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import { mockData } from '../components/data';
+
 
 
 export default class InvoiceTableComponent extends Component {
@@ -14,16 +14,16 @@ export default class InvoiceTableComponent extends Component {
 
     @action
     transferHandler () {
-    	let data = selection;
+    	let data = this.selection;
     		// "[ {\"id\": null, \"invoiceNumber\": \"66666\", \"invoiceDate\": \"2020-03-12\", \"customerName\" : \"Benjamin Yeung\", \"invoiceAmount\": 1200.00,	 \"lines\": [	   { \"id\": null,	   \"itemDescription\": \"Water bottles\",	    \"taxCode\": null,	    \"qty\": 100.00,	    \"unitPrice\" : 12.00,	    \"amount\" : 1200.00	    }	  ]  } ]";
         // Update status of transferred via REST calls
-
+        console.log(data);
 
 
         
         // Post data to backend server
     	let xhr = new XMLHttpRequest();
-    	xhr.open("POST", "http://localhost:5001/invoicesCreate");
+    	xhr.open("POST", "http://localhost:8080/pims-account/invoicesCreate");
         xhr.setRequestHeader("Content-Type", "application/json");
     	//xhr.setRequestHeader("Content-Type", "text/plain");
 
@@ -95,42 +95,20 @@ export default class InvoiceTableComponent extends Component {
     
     @computed('showTransferIndicator', 'showNotTransferIndicator', 'showNotReconcileIndicator')
     get rows() {
-        let rawData = [...mockData];
-        let rowList = [];
-        rawData.forEach((child) => {
-            if (child.canSendToExternal) {
-                let row = new Object();
-                row.invoiceNumber = child.invoiceNumber;
-                row.customerName = child.customerName;
-                row.invoiceDate = child.invoiceDate.substring(0, 10);
-                row.invoiceAmount = child.amountIncludingTax;
-                if (child.externalStatus == 'RECONCILED') {
-                    row.transferred = true;
-                    row.reconciled = true;
-                } else if (child.externalStatus == 'TRANSFERED') {
-                    row.transferred = true;
-                    row.reconciled = false;
-                } else {
-                    row.transferred = false;
-                    row.reconciled = false;
-                }
-                row.accounts = row.reconciled;
-                rowList.push(row);
-            }
-        }
-        )
+        let rowList = this.args.rowlist;
+        console.log(rowList);
         // filter transfered invoice
         if (this.showTransferIndicator) {
-            data.rows = data.rows.filter( i => t.includes( i.transferred ))
-            return data.rows
+            rowList = rowList.filter( i => i.transferred == true);
+            return rowList;
         } else if (this.showNotTransferIndicator) {
-            data.rows = data.rows.filter( i => f.includes( i.transferred ))
-            return data.rows
+            rowList = rowList.filter( i => i.transferred != true);
+            return rowList;
         } else if (this.showNotReconcileIndicator) {
-            data.rows = data.rows.filter( i => f.includes( i.reconciled ))
-            return data.rows
+            rowList= rowList.filter( i => i.reconciled != true);
+            return rowList;
         } else {
-            return rowList
+            return rowList;
         }
     }
 }

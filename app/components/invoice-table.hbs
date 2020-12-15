@@ -26,7 +26,7 @@
 
 <card.body>
   <div>
-    <EmberTable as |t|>
+    <EmberTable style="height: 460px" as |t|>
       <t.head 
       @columns={{this.columns}} 
       @sorts={{this.sorts}}
@@ -56,7 +56,6 @@
     </EmberTable>
   </div>
 </card.body>
-
 <card.footer>
   <div>
     <UkButton type="button"  @color="primary" @on-click={{this.connectQB}}>
