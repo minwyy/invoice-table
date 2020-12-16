@@ -57,7 +57,21 @@
   </div>
 </card.body>
 <card.footer>
-  <div>
+  {{#if this.success}}
+    <FaIcon @icon="check-circle" />
+  {{/if}}
+  {{#if this.haveIssue}}
+    <FaIcon @icon="frown-open" />
+  {{/if}}
+  {{#each this.errorList as |i|}}
+    <div>Invoice No. {{i.invoiceVO.invoiceNumber}} not {{this.method}}</div>
+    <div>{{i.errorMessage}}</div>
+  {{/each}}
+</card.footer>
+</UkCard>
+
+<UkCard style="margin-top: 15px">
+    <div>
     <UkButton type="button"  @color="primary" @on-click={{this.connectQB}}>
       Connect to Quickbooks
     </UkButton> 
@@ -65,5 +79,4 @@
       Connect to Xero
     </UkButton> 
   </div>
-</card.footer>
 </UkCard>

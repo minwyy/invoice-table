@@ -9,26 +9,86 @@ export default class InvoiceTableComponent extends Component {
     @tracked showTransferIndicator = false;
     @tracked showNotTransferIndicator = false;
     @tracked showNotReconcileIndicator = false;
+    @tracked rowList = [];
+    @tracked errorList = [];
+    @tracked success = false;
+    @tracked haveIssue = false;
     sorts = [];
     selection = [];
+    importedInvoices = [];
+    method = '';
+    errorMSG = '';
 
-    @action
+    
+    // Helper to post selected invoices to QB/Xero servers
+    async postData(url, data) {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin',
+            body: JSON.stringify(data)
+        });
+        return response;
+    }
+
+    filterSelectedInvoices(invoiceNumber, filteredSelection) {
+        for (let i = 0; i < filteredSelection.length; i++) {
+            if (filteredSelection[i].invoiceNumber == invoiceNumber) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    updateImportedInvoices(invoiceNumber, rowList) {
+        for (let i = 0; i < rowList.length; i++) {
+            if (rowList[i].invoiceNumber == invoiceNumber) {
+                this.setTransferred(i);
+                break;
+            }
+        }
+    }
+
+    setTransferred(i) {
+        let newRow = {...this.rowList[i]};
+        newRow.transferred = true;
+        this.rowList[i] = newRow;
+    }
+
+    @action 
     transferHandler () {
-    	let data = this.selection;
-    		// "[ {\"id\": null, \"invoiceNumber\": \"66666\", \"invoiceDate\": \"2020-03-12\", \"customerName\" : \"Benjamin Yeung\", \"invoiceAmount\": 1200.00,	 \"lines\": [	   { \"id\": null,	   \"itemDescription\": \"Water bottles\",	    \"taxCode\": null,	    \"qty\": 100.00,	    \"unitPrice\" : 12.00,	    \"amount\" : 1200.00	    }	  ]  } ]";
-        // Update status of transferred via REST calls
-        console.log(data);
+        let filteredSelection = this.selection.filter(child => child.transferred == false);
+        let readyToSendList = [...this.importedInvoices];
+        readyToSendList = readyToSendList.filter(child => this.filterSelectedInvoices(child.invoiceNumber, filteredSelection));
+        // Post data to backend server using helper
+        this.postData('http://localhost:8080/pims-accounts/invoicesCreate', readyToSendList)
+        .then(response => response.json())
+        .then(data => {
+            this.success = true;
+            this.errorList = [];
+            data.forEach((child) => {
+                if (child.success == true) {
+                    this.updateImportedInvoices(child.invoiceVO.invoiceNumber, this.rowList);
+                    console.log('Update relative invoiced status to "transfered"');
+                } else {
+                    this.errorList.push(child)
+                    this.success = false;
+                    this.haveIssue = true;
+                }
+            })
+            this.selection = [];
+            this.method = 'failed to transfer';
+            this.changeAllIndicator();
+            
 
+            //TODO update invoices in polo database
 
-        
-        // Post data to backend server
-    	let xhr = new XMLHttpRequest();
-    	xhr.open("POST", "http://localhost:8080/pims-account/invoicesCreate");
-        xhr.setRequestHeader("Content-Type", "application/json");
-    	//xhr.setRequestHeader("Content-Type", "text/plain");
-
-        xhr.send(data);
-
+        })
+        .catch(error => {
+            console.error('There has been a problem while posting invoices to QB/Xero: ', error);
+        });
     }
 
     @action
@@ -72,7 +132,7 @@ export default class InvoiceTableComponent extends Component {
 
     @action
     connectQB () {
-        window.open("http://localhost:5001/quickbooks/connect");
+        window.open("http://localhost:8080/pims-accounts/quickbooks/connect");
     };
 
     @action
@@ -95,20 +155,46 @@ export default class InvoiceTableComponent extends Component {
     
     @computed('showTransferIndicator', 'showNotTransferIndicator', 'showNotReconcileIndicator')
     get rows() {
-        let rowList = this.args.rowlist;
-        console.log(rowList);
+        this.importedInvoices = this.args.rawInvoices;
+        if (this.args.rawInvoices.length != this.rowList.length) {
+            this.rowList = [];
+            this.importedInvoices.forEach((child) => {
+                if (child.canSendToExternal) {
+                    let row = new Object();
+                    row.invoiceNumber = child.invoiceNumber;
+                    row.customerName = child.customerName;
+                    row.invoiceDate = child.invoiceDate.substring(0, 10);
+                    row.invoiceAmount = child.amountIncludingTax;
+                    if (child.externalStatus == 'RECONCILED') {
+                        row.transferred = true;
+                        row.reconciled = true;
+                    } else if (child.externalStatus == 'TRANSFERED') {
+                        row.transferred = true;
+                        row.reconciled = false;
+                    } else {
+                        row.transferred = false;
+                        row.reconciled = false;
+                    }
+                    row.accounts = row.reconciled;
+                    this.rowList.push(row);
+                }
+            }
+        )}
         // filter transfered invoice
+        let displayList = [];
+        displayList = [...this.rowList];
         if (this.showTransferIndicator) {
-            rowList = rowList.filter( i => i.transferred == true);
-            return rowList;
+            displayList = this.rowList.filter( i => i.transferred == true);
+            return displayList;
         } else if (this.showNotTransferIndicator) {
-            rowList = rowList.filter( i => i.transferred != true);
-            return rowList;
+            displayList = this.rowList.filter( i => i.transferred != true);
+            return displayList;
         } else if (this.showNotReconcileIndicator) {
-            rowList= rowList.filter( i => i.reconciled != true);
-            return rowList;
+            displayList= this.rowList.filter( i => i.reconciled != true);
+            return displayList;
         } else {
-            return rowList;
+            console.log(displayList);
+            return displayList;
         }
     }
 }
