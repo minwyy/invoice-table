@@ -1,3 +1,7 @@
 {{#if @trigger}}
-    <div>the link</div>
+    {{#if this.invoiceId}}
+        <a href="https://app.sandbox.qbo.intuit.com/app/invoice?txnId={{this.invoiceId}}" target="_blank">View Invoice</a>
+    {{else}}
+        -
+    {{/if}}
 {{/if}}

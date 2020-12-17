@@ -44,9 +44,9 @@
       @onSelect={{action (mut this.selection)}}
       @selection={{this.selection}} as |b|>
           <b.row as |r|>
-            <r.cell as |value column|>
+            <r.cell as |value column row|>
             {{#if column.cellComponent}}
-              <column.cellComponent @trigger={{value}} />
+              <column.cellComponent @trigger={{value}} @invoiceNumber={{row.invoiceNumber}} @dict={{this.invoiceNumberId}}/>
             {{else}}
               {{value}}
             {{/if}}
@@ -64,8 +64,16 @@
     <FaIcon @icon="frown-open" />
   {{/if}}
   {{#each this.errorList as |i|}}
-    <div>Invoice No. {{i.invoiceVO.invoiceNumber}} not {{this.method}}</div>
+    <div>
+      <b>Invoice No. {{i.invoiceVO.invoiceNumber}} {{this.method}}</b>
+    </div>
     <div>{{i.errorMessage}}</div>
+  {{/each}}
+  <div></div>
+  {{#each this.errorReList as |i|}}
+    <div>
+      <b>Invoice No. {{i.invoiceVO.invoiceNumber}} was reconciled found not matching</b>
+    </div>
   {{/each}}
 </card.footer>
 </UkCard>
@@ -78,5 +86,8 @@
     <UkButton type="button"  @color="primary" @on-click={{this.connectXero}}>
       Connect to Xero
     </UkButton> 
+  </div>
+  <div>
+    {{this}}
   </div>
 </UkCard>

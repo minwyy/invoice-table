@@ -102,7 +102,7 @@ export const mockData =  [
         "taxPercentage": 10.00,
         "amountIncludingTax": 100.10,
         "externalInvoiceId": null,
-        "externalStatus": "NOT TRANSFERED",
+        "externalStatus": "TRANSFERED",
         "externalMessage": null,
         "arInvoiceLineDtos": [
             {
