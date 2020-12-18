@@ -85,7 +85,7 @@ export default class InvoiceTableComponent extends Component {
         let readyToSendList = [...this.importedInvoices];
         readyToSendList = readyToSendList.filter(child => this.filterSelectedInvoices(child.invoiceNumber, filteredSelection));
         // Post data to backend server using helper
-        this.postData('http://localhost:8080/pims-accounts/invoicesCreate', readyToSendList)
+        this.postData('http://localhost:8090/pims-accounts/invoicesCreate', readyToSendList)
         .then(response => response.json())
         .then(data => {
             this.success = true;
@@ -134,7 +134,7 @@ export default class InvoiceTableComponent extends Component {
         let readyToSendList = [...this.importedInvoices];
         readyToSendList = readyToSendList.filter(child => this.filterSelectedInvoices(child.invoiceNumber, this.selection));
         // Post data to backend server using helper
-        this.postData('http://localhost:8080/pims-accounts/invoicesCompare', readyToSendList)
+        this.postData('http://localhost:8090/pims-accounts/invoicesCompare', readyToSendList)
         .then(response => response.json())
         .then(data => {
             this.success = true;
@@ -219,15 +219,7 @@ export default class InvoiceTableComponent extends Component {
         this.showNotReconcileIndicator = false;
     };
 
-    @action
-    connectQB () {
-        window.open("http://localhost:8080/pims-accounts/quickbooks/connect");
-    };
 
-    @action
-    connectXero () {
-        window.open("http://localhost:5001/xero/connect");
-    };
 
     @computed
     get columns() {
