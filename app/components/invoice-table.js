@@ -101,6 +101,8 @@ export default class InvoiceTableComponent extends Component {
                 if (child.success == true) {
                     this.updateImportedInvoicesTransferred(child.invoiceVO.invoiceNumber, this.rowList);
                     console.log('Update relative invoiced status to "transferred"');
+                    //TODO update invoices external status to "transfered" in polo database
+
                 } else {
                     this.success = false;
                     this.haveIssue = true;
@@ -111,7 +113,7 @@ export default class InvoiceTableComponent extends Component {
                 }
             })
             this.changeAllIndicator();
-            //TODO update invoices external status to "transfered" in polo database
+
 
         })
         .catch(error => {
@@ -149,6 +151,8 @@ export default class InvoiceTableComponent extends Component {
                 if (child.success == true) {
                     this.updateImportedInvoicesReconciled(child.invoiceVO.invoiceNumber, this.rowList);
                     console.log('Update relative invoiced status to "reconciled"');
+                    //TODO update invoices external status to "recounciled" in polo database if it was not recounciled
+
                 } else {
                     this.success = false;
                     this.haveIssue = true;
@@ -164,8 +168,8 @@ export default class InvoiceTableComponent extends Component {
                 }
             })
             this.changeAllIndicator();
-            
-            //TODO update invoices in polo database
+
+
 
         })
         .catch(error => {
