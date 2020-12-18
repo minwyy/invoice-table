@@ -2,7 +2,6 @@ import Component from '@glimmer/component';
 import { action, computed } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 
-
 export default class InvoiceTableComponent extends Component {
     // triggers for displaying selected items
     @tracked showTransferIndicator = false;
