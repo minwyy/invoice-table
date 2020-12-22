@@ -46,7 +46,7 @@
           <b.row as |r|>
             <r.cell as |value column row|>
             {{#if column.cellComponent}}
-              <column.cellComponent @trigger={{value}} @invoiceNumber={{row.invoiceNumber}} @dict={{this.invoiceNumberId}}/>
+              <column.cellComponent @trigger={{value}} @invoiceNumber={{row.invoiceNumber}} @dict={{this.invoiceNumberId}} @provider={{@source}}/>
             {{else}}
               {{value}}
             {{/if}}
@@ -71,10 +71,18 @@
   {{/each}}
   <div></div>
   {{#each this.errorReList as |i|}}
+  <hr>
     <div>
-      <b>Invoice No. {{i.invoiceVO.invoiceNumber}} was reconciled found not matching</b>
+      <b>Invoice No. {{i.invoiceVO.invoiceNumber}} was marked reconciled but found not matching</b>
     </div>
   {{/each}}
 </card.footer>
 </UkCard>
 
+<UkCard style="margin-top: 15px">
+    <div style="margin-top: 15px">
+        <UkButton class="uk-width-1-6" type="button"  @color="primary" @size="large" @on-click={{this.reconnect}}>
+            Reconnect to {{@source}}
+        </UkButton> 
+    </div>
+</UkCard>

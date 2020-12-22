@@ -1,7 +1,13 @@
-{{#if @trigger}}
-    {{#if this.invoiceId}}
+{{!-- {{#if @trigger}} --}}
+{{#if this.invoiceId}}
+    {{#if this.quickbooks}}
         <a href="https://app.sandbox.qbo.intuit.com/app/invoice?txnId={{this.invoiceId}}" target="_blank">View Invoice</a>
     {{else}}
-        -
+        <a href="https://go.xero.com/AccountsReceivable/View.aspx?InvoiceID={{this.invoiceId}}" target="_blank">View Invoice</a>
     {{/if}}
+{{else}}
+
 {{/if}}
+{{!-- {{else}}
+    -
+{{/if}} --}}

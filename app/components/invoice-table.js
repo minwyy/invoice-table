@@ -13,7 +13,7 @@ export default class InvoiceTableComponent extends Component {
     @tracked success = false;
     @tracked haveIssue = false;
     @tracked invoiceNumberId = new Object();
-    @tracked connected = 'not connected to QB/Xero';
+    @tracked connected = 'not connected to Quickbooks';
     sorts = [];
     selection = [];
     importedInvoices = [];
@@ -84,17 +84,27 @@ export default class InvoiceTableComponent extends Component {
         let filteredSelection = this.selection.filter(child => child.transferred == false);
         let readyToSendList = [...this.importedInvoices];
         readyToSendList = readyToSendList.filter(child => this.filterSelectedInvoices(child.invoiceNumber, filteredSelection));
+        let postUrl = '';
         // Post data to backend server using helper
-        this.postData('http://localhost:8090/pims-accounts/invoicesCreate', readyToSendList)
+        if (this.args.source == 'quickbooks') {
+            postUrl = 'http://localhost:8090/pims-accounts/invoicesCreate';
+        } else if (this.args.source == 'xero') {
+            postUrl = 'http://localhost:8090/pims-accounts/xero/invoicesCreate';
+        }
+        this.postData(postUrl, readyToSendList)
         .then(response => response.json())
         .then(data => {
-            this.success = true;
-            this.haveIssue = false;
             this.errorList = [];
             this.errorReList = [];
+            this.success = true;
+            this.haveIssue = false;
             data.forEach((child) => {
                 if (child.invoice) {
-                    this.set(child.invoice.docNumber, child.invoice.id);
+                    if (this.args.source == 'quickbooks') {
+                        this.set(child.invoice.docNumber, child.invoice.id);
+                    } else if (this.args.source == 'xero') {
+                        this.set(child.invoice.InvoiceNumber, child.invoice.InvoiceID);
+                    }
                 }
                 if (child.success == true) {
                     this.updateImportedInvoicesTransferred(child.invoiceVO.invoiceNumber, this.rowList);
@@ -134,7 +144,13 @@ export default class InvoiceTableComponent extends Component {
         let readyToSendList = [...this.importedInvoices];
         readyToSendList = readyToSendList.filter(child => this.filterSelectedInvoices(child.invoiceNumber, this.selection));
         // Post data to backend server using helper
-        this.postData('http://localhost:8090/pims-accounts/invoicesCompare', readyToSendList)
+        let postUrl = '';
+        if (this.args.source == 'quickbooks') {
+            postUrl = 'http://localhost:8090/pims-accounts/invoicesCompare';
+        } else if (this.args.source == 'xero') {
+            postUrl = 'http://localhost:8090/pims-accounts/xero/invoicesCompare';
+        }
+        this.postData(postUrl, readyToSendList)
         .then(response => response.json())
         .then(data => {
             this.success = true;
@@ -144,7 +160,11 @@ export default class InvoiceTableComponent extends Component {
             
             data.forEach((child) => {
                 if (child.invoice) {
-                    this.set(child.invoice.docNumber, child.invoice.id);
+                    if (this.args.source == 'quickbooks') {
+                        this.set(child.invoice.docNumber, child.invoice.id);
+                    } else if (this.args.source == 'xero') {
+                        this.set(child.invoice.InvoiceNumber, child.invoice.InvoiceID);
+                    }
                 }
                 if (child.success == true) {
                     this.updateImportedInvoicesReconciled(child.invoiceVO.invoiceNumber, this.rowList);
@@ -219,6 +239,14 @@ export default class InvoiceTableComponent extends Component {
         this.showNotReconcileIndicator = false;
     };
 
+    @action
+    reconnect () {
+        if (this.args.source == 'quickbooks') {
+            window.open("http://localhost:8090/pims-accounts/quickbooks/connect");
+        } else {
+            window.open("http://localhost:8090/pims-accounts/xero/connect");
+        }
+    };
 
 
     @computed
