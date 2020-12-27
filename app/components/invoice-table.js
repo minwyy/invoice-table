@@ -14,6 +14,7 @@ export default class InvoiceTableComponent extends Component {
     @tracked haveIssue = false;
     @tracked invoiceNumberId = new Object();
     @tracked connected = 'not connected to Quickbooks';
+
     sorts = [];
     selection = [];
     importedInvoices = [];
@@ -64,6 +65,16 @@ export default class InvoiceTableComponent extends Component {
             }
         }
     }
+
+    updateImportedInvoicesNotTransferred(invoiceNumber, rowList) {
+        for (let i = 0; i < rowList.length; i++) {
+            if (rowList[i].invoiceNumber == invoiceNumber) {
+                this.setNotTransferred(i);
+                break;
+            }
+        }
+    }
+    
     
     setTransferred(i) {
         let newRow = {...this.rowList[i]};
@@ -76,6 +87,13 @@ export default class InvoiceTableComponent extends Component {
         let newRow = {...this.rowList[i]};
         newRow.transferred = true;
         newRow.reconciled = true;
+        this.rowList[i] = newRow;
+    }
+
+    setNotTransferred(i) {
+        let newRow = {...this.rowList[i]};
+        newRow.transferred = false;
+        newRow.reconciled = false;
         this.rowList[i] = newRow;
     }
 
@@ -109,20 +127,15 @@ export default class InvoiceTableComponent extends Component {
                 if (child.success == true) {
                     this.updateImportedInvoicesTransferred(child.invoiceVO.invoiceNumber, this.rowList);
                     console.log('Update relative invoiced status to "transferred"');
-                    //TODO update invoices external status to "transfered" in polo database
-
                 } else {
                     this.success = false;
                     this.haveIssue = true;
-                    if (child.success == false) {
-                        this.errorList.push(child)
-                        this.method = 'not successfully transferred';
-                    }
+                    this.errorList.push(child)
+                    this.method = 'not successfully transferred';
+                    
                 }
             })
             this.changeAllIndicator();
-
-
         })
         .catch(error => {
             this.success = false;
@@ -169,26 +182,24 @@ export default class InvoiceTableComponent extends Component {
                 if (child.success == true) {
                     this.updateImportedInvoicesReconciled(child.invoiceVO.invoiceNumber, this.rowList);
                     console.log('Update relative invoiced status to "reconciled"');
-                    //TODO update invoices external status to "recounciled" in polo database if it was not recounciled
-
                 } else {
                     this.success = false;
                     this.haveIssue = true;
-                    if (child.success == false) {
-                        this.method = 'not successfully reconciled';
-                        this.errorList.push(child);
-                        if (child.invoiceVO.externalStatus === 'RECONCILED') {
-                            this.errorReList.push(child);
-                            // this.updateImportedInvoicesTransferred(child.invoiceVO.invoiceNumber, this.rowList);
-                            // console.log('Update relative invoiced status from "reconciled" to "transferred"');
-                        } 
+                    this.method = 'not successfully reconciled';
+                    this.errorList.push(child);
+                    if (child.invoiceVO.externalStatus === 'RECONCILED') {
+                        this.errorReList.push(child);
+                    }
+                    if (child.invoice) {
+                        this.updateImportedInvoicesTransferred(child.invoiceVO.invoiceNumber, this.rowList);
+                        console.log('Update relative invoiced status from "reconciled" to "transferred"');
+                    } else {
+                        this.updateImportedInvoicesNotTransferred(child.invoiceVO.invoiceNumber, this.rowList);
+                        console.log('Update relative invoiced status from "reconciled" to "not transferred"');
                     }
                 }
             })
             this.changeAllIndicator();
-
-
-
         })
         .catch(error => {
             this.success = false;
@@ -277,7 +288,7 @@ export default class InvoiceTableComponent extends Component {
                     if (child.externalStatus === 'RECONCILED') {
                         row.transferred = true;
                         row.reconciled = true;
-                    } else if (child.externalStatus === 'TRANSFERED') {
+                    } else if (child.externalStatus === 'TRANSFERRED') {
                         row.transferred = true;
                         row.reconciled = false;
                     } else {

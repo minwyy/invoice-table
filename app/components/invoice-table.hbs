@@ -1,14 +1,14 @@
-<UkCard @size="large" as |head|>
-  <head.header>
+<UkCard @size="large" as |card|>
+  <card.header>
     <UkButton type="button" @color="primary" @on-click={{this.transferHandler}}>
       Transfer
     </UkButton> 
     <UkButton type="button"  @color="primary" @on-click={{this.reconcileHandler}}>
       Reconcile
     </UkButton> 
-    <UkButton type="button"  @color="primary" @on-click={{this.searchHandler}}>
+    {{!-- <UkButton type="button"  @color="primary" @on-click={{this.searchHandler}}>
       Find
-    </UkButton> 
+    </UkButton>  --}}
     <label>display: </label>
     <UkButton type="button"  @color="secondary" @on-click={{this.changeTransferIndicator}}>
       Transfered
@@ -22,7 +22,7 @@
     <UkButton type="button" @color="secondary" @on-click={{this.changeAllIndicator}}>
       All
     </UkButton> 
-  </head.header>
+  </card.header>
 
 <card.body>
   <div>
